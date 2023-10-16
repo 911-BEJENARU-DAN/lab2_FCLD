@@ -1,4 +1,4 @@
-class SymbolTable(val size: Int = 107) {
+class SymbolTable(val size: Int = 10) {
     val idHashTable = HashTable<String>(size)
     val intConstHashTable = HashTable<Int>(size)
     val stringConstHashTable = HashTable<String>(size)
