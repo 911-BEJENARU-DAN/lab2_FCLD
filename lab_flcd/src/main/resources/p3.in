@@ -1,0 +1,15 @@
+var n, nr, sum = 0;
+
+n = readInt(n);
+
+var i = 0;
+
+while (i < n) {
+    nr = readInt();
+    sum = sum + nr;
+    i = i + 1;
+}
+
+var msg = "Sum is ";
+print(msg);
+print(sum);

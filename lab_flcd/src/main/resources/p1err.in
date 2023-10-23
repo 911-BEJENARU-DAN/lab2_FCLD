@@ -1,0 +1,21 @@
+var a;
+var b, c;
+
+print("Start program);
+
+a = readInt();
+b = readInt();
+c = readInt();
+
+var min = a;
+
+if (min > b) {
+    min = b;
+}
+
+if (min > c) {
+    min = c;
+}
+
+print("Min is");
+print(min);

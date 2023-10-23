@@ -1,0 +1,13 @@
+var x, d = 3;
+var isPrime = 1;
+
+x = readInt();
+
+while (d * d  <= x) {
+    if (x % d == 0) {
+        isPrime = 0;
+    }
+    d = d + 1;
+}
+
+print(isPrime);

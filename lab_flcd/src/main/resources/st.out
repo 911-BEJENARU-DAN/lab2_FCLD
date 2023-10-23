@@ -1,0 +1,18 @@
+Symbol table size: 10
+
+Identifiers: 
+4, 0: min
+7, 0: a
+7, 1: print
+7, 2: readInt
+7, 3: if
+8, 0: b
+9, 0: var
+9, 1: c
+
+Integer constants: 
+2, 0: 2
+
+String constants: 
+2, 0: Start program
+2, 1: Min is
