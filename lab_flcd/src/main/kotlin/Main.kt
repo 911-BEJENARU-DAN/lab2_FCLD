@@ -2,24 +2,25 @@ import java.io.File;
 
 fun getBackCode(scanner: Scanner, tokens: List<String>) {
     for (pair in scanner.pif) {
-        if (pair.first >= 0) {
-            print("${tokens[pair.first]} ");
+        if (pair.first !in listOf("stringConstant", "intConstant", "identifier")) {
+            print("${pair.first} ");
         }
-        else if (pair.first == -1) {
+        else if (pair.first == "identifier") {
             print("${scanner.symbolTable.getId(pair.second.first, pair.second.second)} ");
         }
-        else if (pair.first == -2) {
+        else if (pair.first == "intConstant") {
             print("${scanner.symbolTable.getIntConst(pair.second.first, pair.second.second)} ");
         }
-        else if (pair.first == -3) {
+        else if (pair.first == "stringConstant") {
             print("\"${scanner.symbolTable.getStringConst(pair.second.first, pair.second.second)}\" ");
         }
     }
     println();
 }
 
+
 fun main(args: Array<String>) {
-    val program = File("src/main/resources/p1err.in").readText();
+    val program = File("src/main/resources/p2.in").readText();
     val tokens = File("src/main/resources/token.in").readLines();
     val scanner = Scanner(program, tokens);
     try{
@@ -32,7 +33,9 @@ fun main(args: Array<String>) {
     getBackCode(scanner, tokens);
     File("src/main/resources/pif.out").printWriter().use { w ->
         for (pair in scanner.pif) {
-            w.println("${pair.first} (${pair.second.first}, ${pair.second.second})");
+            val token = pair.first
+            val position = pair.second
+            w.println("$token (${position.first}, ${position.second})")
         }
     }
 

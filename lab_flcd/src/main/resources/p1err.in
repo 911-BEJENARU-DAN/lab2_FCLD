@@ -7,7 +7,7 @@ a = readInt();
 b = readInt();
 c = readInt();
 
-var min = a;
+var 2min = a;
 
 if (min > b) {
     min = b;

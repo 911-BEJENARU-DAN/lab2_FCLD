@@ -1,6 +1,8 @@
+import org.intellij.lang.annotations.Identifier
+
 class Scanner(private val program: String, private val tokens: List<String>) {
     val symbolTable = SymbolTable();
-    val pif = mutableListOf<Pair<Int, Pair<Int, Int>>>();
+    val pif = mutableListOf<Pair<String, Pair<Int, Int>>>();
     private var index = 0;
     private var currentLine = 1;
 
@@ -35,7 +37,7 @@ class Scanner(private val program: String, private val tokens: List<String>) {
         val stringConstant = regex.groups[1]!!.value;
         index += stringConstant.length + 2;
         val position = symbolTable.addStringConst(stringConstant);
-        pif.add(Pair(position.positionType.code, position.pair));
+        pif.add(Pair("stringConstant", position.pair));
         return true;
     }
 
@@ -45,14 +47,14 @@ class Scanner(private val program: String, private val tokens: List<String>) {
         index += intConstant.length;
         val parsedIntConstant = intConstant.toInt();
         val position = symbolTable.addIntConst(parsedIntConstant);
-        pif.add(Pair(position.positionType.code, position.pair));
+        pif.add(Pair("intConstant", position.pair));
         return true;
     }
 
     private fun treatFromTokenList(): Boolean {
         for ((tokenIndex, token) in tokens.withIndex()) {
             if (program.startsWith(token, index)) {
-                pif.add(Pair(tokenIndex, Position.nullPosition.pair));
+                pif.add(Pair(token, Position.nullPosition.pair));
                 index += token.length;
                 return true;
             }
@@ -70,7 +72,7 @@ class Scanner(private val program: String, private val tokens: List<String>) {
 
         index += identifier.length;
         val position = symbolTable.addId(identifier);
-        pif.add(Pair(position.positionType.code, position.pair));
+        pif.add(Pair("identifier", position.pair));
         return true;
     }
 
