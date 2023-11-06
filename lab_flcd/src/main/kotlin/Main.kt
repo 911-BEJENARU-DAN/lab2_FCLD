@@ -20,7 +20,7 @@ fun getBackCode(scanner: Scanner, tokens: List<String>) {
 
 
 fun main(args: Array<String>) {
-    val program = File("src/main/resources/p2.in").readText();
+    val program = File("src/main/resources/p1err.in").readText();
     val tokens = File("src/main/resources/token.in").readLines();
     val scanner = Scanner(program, tokens);
     try{

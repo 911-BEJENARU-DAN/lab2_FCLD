@@ -1,13 +1,13 @@
 var a;
 var b, c;
 
-print("Start program);
+print("Start program");
 
 a = readInt();
 b = readInt();
 c = readInt();
 
-var 2min = a;
+var min = -3 + 4;
 
 if (min > b) {
     min = b;

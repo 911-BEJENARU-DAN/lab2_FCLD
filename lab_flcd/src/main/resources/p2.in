@@ -1,5 +1,6 @@
 var x, d = 3;
 var isPrime = 1;
+var s = "hello";
 
 x = readInt();
 
