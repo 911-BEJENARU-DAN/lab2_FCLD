@@ -18,11 +18,11 @@ fun displayMenu() {
     println("3. Display input state.")
     println("4. Display output states.")
     println("5. Display transitions.")
-    /*println("6. Verify word of different dimensions.")
+    println("6. Verify word of different dimensions.")
     println("7. Verify word of length 1 characters.")
     println("8. Get matching different dimension substring.")
     println("9. Get matching substring of length 1.")
-    println("0. Exit.")*/
+    println("0. Exit.")
     println()
 }
 
@@ -38,7 +38,7 @@ fun main() {
             3->fa.displayInStates()
             4->fa.displayOutStates()
             5->fa.displayTransitions()
-            /*6->println(fa.isValid(readCharacters()))
+            6->println(fa.isValid(readCharacters()))
             7->println(fa.isValid(readln()))
             8->{
                 val characters = readCharacters()
@@ -65,7 +65,7 @@ fun main() {
                     print("Prefix not matching.")
                     println()
                 }
-            }*/
+            }
             else->{println("The option doesn't exist.\n")}
         }
 

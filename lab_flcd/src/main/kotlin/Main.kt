@@ -6,13 +6,13 @@ fun getBackCode(scanner: Scanner, tokens: List<String>) {
             print("${pair.first} ");
         }
         else if (pair.first == "identifier") {
-            print("${scanner.symbolTable.getId(pair.second.first, pair.second.second)} ");
+            print("${scanner.symTable.getId(pair.second.first, pair.second.second)} ");
         }
         else if (pair.first == "intConstant") {
-            print("${scanner.symbolTable.getIntConst(pair.second.first, pair.second.second)} ");
+            print("${scanner.symTable.getIntConst(pair.second.first, pair.second.second)} ");
         }
         else if (pair.first == "stringConstant") {
-            print("\"${scanner.symbolTable.getStringConst(pair.second.first, pair.second.second)}\" ");
+            print("\"${scanner.symTable.getStringConst(pair.second.first, pair.second.second)}\" ");
         }
     }
     println();
@@ -40,27 +40,27 @@ fun main(args: Array<String>) {
     }
 
     File("src/main/resources/st.out").printWriter().use { w ->
-        w.println("Symbol table size: ${scanner.symbolTable.size}\n");
+        w.println("Symbol table size: ${scanner.symTable.size}\n");
         w.println("Identifiers: ");
-        for (i in 0 until scanner.symbolTable.size) {
-            for (j in 0 until scanner.symbolTable.idHashTable.containers[i].size) {
-                w.println("$i, $j: ${scanner.symbolTable.idHashTable.containers[i][j]}");
+        for (i in 0 until scanner.symTable.size) {
+            for (j in 0 until scanner.symTable.idHashTable.containers[i].size) {
+                w.println("$i, $j: ${scanner.symTable.idHashTable.containers[i][j]}");
             }
         }
 
         w.println();
         w.println("Integer constants: ");
-        for (i in 0 until scanner.symbolTable.size) {
-            for (j in 0 until scanner.symbolTable.intConstHashTable.containers[i].size) {
-                w.println("$i, $j: ${scanner.symbolTable.intConstHashTable.containers[i][j]}");
+        for (i in 0 until scanner.symTable.size) {
+            for (j in 0 until scanner.symTable.intConstHashTable.containers[i].size) {
+                w.println("$i, $j: ${scanner.symTable.intConstHashTable.containers[i][j]}");
             }
         }
 
         w.println();
         w.println("String constants: ");
-        for (i in 0 until scanner.symbolTable.size) {
-            for (j in 0 until scanner.symbolTable.stringConstHashTable.containers[i].size) {
-                w.println("$i, $j: ${scanner.symbolTable.stringConstHashTable.containers[i][j]}");
+        for (i in 0 until scanner.symTable.size) {
+            for (j in 0 until scanner.symTable.stringConstHashTable.containers[i].size) {
+                w.println("$i, $j: ${scanner.symTable.stringConstHashTable.containers[i][j]}");
             }
         }
     }

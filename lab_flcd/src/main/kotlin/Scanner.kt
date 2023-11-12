@@ -1,99 +1,114 @@
-import org.intellij.lang.annotations.Identifier
+import FA.FA
 
 class Scanner(private val program: String, private val tokens: List<String>) {
-    val symbolTable = SymbolTable();
+    val symTable = SymbolTable();
     val pif = mutableListOf<Pair<String, Pair<Int, Int>>>();
-    private var index = 0;
-    private var currentLine = 1;
+    private var currPos = 0;
+    private var currLine = 1;
 
-    private fun skipWhiteSpaces() {
-        while (index < program.length && program[index].isWhitespace()) {
-            if (program[index] == '\n') {
-                currentLine++;
+    private fun jumpSpaces() {
+        while (currPos < program.length && program[currPos].isWhitespace()) {
+            if (program[currPos] == '\n') {
+                currLine++;
             }
-            index++;
+            currPos++;
         }
     }
 
-    private fun skipComments() {
-        if (program.startsWith("//", index)) {
-            while (index < program.length && program[index] != '\n'){
-                index++;
+    private fun jumpComments() {
+        if (program.startsWith("//", currPos)) {
+            while (currPos < program.length && program[currPos] != '\n'){
+                currPos++;
             }
             return
         }
     }
 
-    private fun treatStringConstant(): Boolean {
-        val regex = Regex("^\"([a-zA-z0-9_ ]*)\"").find(program.substring(index));
+    private fun handleStringConstant(): Boolean {
+        val regex = Regex("^\"([a-zA-z0-9_ ]*)\"").find(program.substring(currPos));
         if (regex == null) {
-            if (Regex("^\"").containsMatchIn(program.substring(index)))
-                throw ScannerException("Lexical error. Unclosed quotes. ", currentLine);
-            if (Regex("^\"[^\"]\"").containsMatchIn(program.substring(index)))
-                throw ScannerException("Lexical error. Invalid characters inside string.  ", currentLine);
+            if (Regex("^\"").containsMatchIn(program.substring(currPos)))
+                throw ScannerException("Lexical error. Unclosed quotes. ", currLine);
+            if (Regex("^\"[^\"]\"").containsMatchIn(program.substring(currPos)))
+                throw ScannerException("Lexical error. Invalid characters inside string.  ", currLine);
             return false;
         }
 
-        val stringConstant = regex.groups[1]!!.value;
-        index += stringConstant.length + 2;
-        val position = symbolTable.addStringConst(stringConstant);
-        pif.add(Pair("stringConstant", position.pair));
+        val stringConst = regex.groups[1]!!.value;
+        currPos += stringConst.length + 2;
+        val pos = symTable.addStringConst(stringConst);
+        pif.add(Pair("stringConstant", pos.pair));
         return true;
     }
 
-    private fun treatIntConstant(): Boolean {
-        val regex = Regex("^([+-]?[1-9][0-9]*|0)").find(program.substring(index)) ?: return false
-        val intConstant = regex.groups[1]!!.value;
-        index += intConstant.length;
-        val parsedIntConstant = intConstant.toInt();
-        val position = symbolTable.addIntConst(parsedIntConstant);
-        pif.add(Pair("intConstant", position.pair));
+    private fun handleIntConstant(): Boolean {
+        /*val regex = Regex("^([+-]?[1-9][0-9]*|0)").find(program.substring(index)) ?: return false
+        val intConstant = regex.groups[1]!!.value;*/
+        val finiteAutomaton = FA("src/main/resources/intConstant.in");
+        val intConst = finiteAutomaton.nextValid(program.substring(currPos)) ?: return false;
+
+        if (intConst[0] in listOf('-', '+')
+            && pif.size > 0 &&
+            pif.last().first in listOf(
+                "intConstant",
+                "stringConstant",
+                "identifier")) {
+            return false;
+        }
+
+        currPos += intConst.length;
+        val intConstVal = intConst.toInt();
+        val pos = symTable.addIntConst(intConstVal);
+        pif.add(Pair("intConstant", pos.pair));
         return true;
     }
 
-    private fun treatFromTokenList(): Boolean {
-        for ((tokenIndex, token) in tokens.withIndex()) {
-            if (program.startsWith(token, index)) {
+    private fun handleFromTokenList(): Boolean {
+        for ((tokenIdx, token) in tokens.withIndex()) {
+            if (program.startsWith(token, currPos)) {
                 pif.add(Pair(token, Position.nullPosition.pair));
-                index += token.length;
+                currPos += token.length;
                 return true;
             }
         }
         return false;
     }
 
-    private fun treatIdentifier(): Boolean {
-        val regex = Regex("^([a-zA-Z_][a-zA-Z0-9_]*)").find(program.substring(index)) ?: return false;
-        val identifier = regex.groups[1]!!.value;
+    private fun handleIdentifier(): Boolean {
+        /*val regex = Regex("^([a-zA-Z_][a-zA-Z0-9_]*)").find(program.substring(index)) ?: return false;
+        val identifier = regex.groups[1]!!.value;*/
 
-        if (identifier[0].isDigit()) {
-            throw ScannerException("Lexical error. Invalid identifier.", currentLine);
+        val finiteAutomaton = FA("src/main/resources/identifier.in");
+        val id = finiteAutomaton.nextValid(program.substring(currPos)) ?: return false
+
+        if (id[0].isDigit()) {
+            throw ScannerException("Lexical error. Invalid identifier.", currLine);
         }
 
-        index += identifier.length;
-        val position = symbolTable.addId(identifier);
-        pif.add(Pair("identifier", position.pair));
+        currPos += id.length;
+        val pos = symTable.addId(id);
+        pif.add(Pair("identifier", pos.pair));
         return true;
     }
 
     private fun nextToken() {
-        skipWhiteSpaces();
-        skipComments();
-        if (index == program.length) {
+        jumpSpaces();
+        jumpComments();
+        if (currPos == program.length) {
             return;
         }
 
-        for (function in listOf(Scanner::treatIntConstant, Scanner::treatStringConstant,
-            Scanner::treatFromTokenList, Scanner::treatIdentifier)) {
-            if (function(this)) {
+        for (f in listOf(Scanner::handleIntConstant, Scanner::handleStringConstant,
+            Scanner::handleFromTokenList, Scanner::handleIdentifier)) {
+            if (f(this)) {
                 return
             }
         }
-        throw ScannerException("Lexical error: Token cannot be classified ", currentLine);
+        throw ScannerException("Lexical error: Token cannot be classified ", currLine);
     }
 
     fun scan () {
-        while (index in program.indices){
+        while (currPos in program.indices){
             nextToken();
         }
     }
